@@ -1,4 +1,4 @@
-NAME=inception
+NAME=transcendence
 
 SRCS=./srcs/docker-compose.yml
 
@@ -19,18 +19,12 @@ status:
 	docker compose $(FLAGS) ps
 	
 clean:
-	rm -rf /Users/kalinololo/data/wordpress/*
-	rm -rf /Users/kalinololo/data/db/*
 
 fclean: clean
-	docker rmi -f nginx
-	docker rmi -f mariadb
-	docker rmi -f wordpress
-	docker rm -f nginx
-	docker rm -f mariadb
-	docker rm -f wordpress
-	docker volume rm -f inception_wordpress
-	docker volume rm -f inception_db
-	docker network rm inception
+	docker rmi -f react
+	docker rmi -f nestjs
+	docker rm -f react
+	docker rm -f nestjs
+	docker network rm transcendence
 
 re: stop fclean all

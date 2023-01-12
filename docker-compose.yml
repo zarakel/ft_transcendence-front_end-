@@ -1,11 +1,25 @@
 version: "3.9"
 
+volumes:
+  back:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./srcs/back
+  front:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./srcs/front
+    
 services:
   nestjs:
     container_name: nestjs
-    build: ./requirements/nestjs
+    build: ./srcs/requirements/nestjs
     image: nestjs
-    env_file: .env
+    env_file: ./srcs/.env
     depends_on:
       - postgresql
     ports:
@@ -13,7 +27,7 @@ services:
     networks:
       - transcendence
     volumes:
-      - ./back:/var/www/html/back
+      - back:/var/www/html/back
     restart: unless-stopped
 
   postgresql:
