@@ -1,14 +1,15 @@
-FROM debian:buster
+FROM node:latest
 
 RUN	apt -y update
 RUN apt -y upgrade
-RUN apt install -y nodejs npm
+RUN apt install -y nginx
 
-RUN mkdir /var/www/html
+COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+RUN mkdir -p /var/www/html 
+VOLUME ["/var/www/html"]
+WORKDIR /var/www/html
 
-WORKDIR /var/www/html/
+EXPOSE 8080
 
-ENTRYPOINT ["npm", "run", "build"]
-
+ENTRYPOINT ["./start.sh"]

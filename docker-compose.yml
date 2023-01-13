@@ -1,18 +1,4 @@
 version: "3.9"
-
-volumes:
-  back:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./srcs/back
-  front:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./srcs/front
     
 services:
   nestjs:
@@ -27,7 +13,23 @@ services:
     networks:
       - transcendence
     volumes:
-      - back:/var/www/html/back
+      - ./srcs/back:/var/www/html/back
+    restart: unless-stopped
+
+  react:
+    container_name: react
+    build: ./srcs/requirements/react
+    image: react
+    env_file: ./srcs/.env
+    depends_on:
+      - postgresql
+      - nestjs
+    ports:
+      - 8080:8080
+    networks:
+      - transcendence
+    volumes:
+      - ./srcs/front:/var/www/html
     restart: unless-stopped
 
   postgresql:
