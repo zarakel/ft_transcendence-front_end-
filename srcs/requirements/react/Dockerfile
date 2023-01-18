@@ -1,8 +1,6 @@
-FROM node:latest
+FROM alpine:latest
 
-RUN	apt -y update
-RUN apt -y upgrade
-RUN apt install -y nginx
+RUN apk add --update nodejs npm nginx
 
 COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
 
