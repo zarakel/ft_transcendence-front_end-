@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './database/user.entity';
+import { AppGateway } from './app.gateway';
 
 @Module({
   imports: [
+    AppGateway,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'postgresql',
