@@ -1,5 +1,5 @@
 {
-  "name": "transcendence_react",
+  "name": "ft_transcendence",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,10 +10,17 @@
     "@types/node": "^16.18.11",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.10",
+    "axios": "^1.2.3",
+    "express-oauth-server": "^2.0.0",
+    "fastify": "^4.11.0",
+    "node-fetch": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
+    "react-router-dom": "^6.6.2",
+    "react-scripts": "^5.0.1",
+    "tw-elements": "^1.0.0-alpha13",
     "typescript": "^4.9.4",
+    "use-local-storage-state": "^18.1.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -39,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.2.4"
   }
 }
