@@ -4,6 +4,8 @@ import { User } from './database/user.entity';
 import { AppGateway } from './app.gateway';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { HomeController } from './home.controller';
+import { HomeService } from './home.service';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { AppService } from './app.service';
       synchronize: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, HomeController],
+  providers: [AppService, HomeService],
 })
 export class AppModule {}

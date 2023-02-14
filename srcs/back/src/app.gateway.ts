@@ -1,5 +1,6 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Socket, Server } from 'socket.io';
+import GameRoom from "./room/GameRoom";
 import Player from "./room/Player"
 
 @WebSocketGateway({
@@ -8,11 +9,14 @@ import Player from "./room/Player"
 export class AppGateway
 {
 	private users : Map<string, Player>
+	private gameRooms : Map<string, GameRoom>
 
 	@WebSocketServer()
 	public server: Server;
 	public afterInit(server: Server) {
 		this.users = new Map();
+		this.gameRooms = new Map();
+		this.gameRooms.set("0", new GameRoom(0, "toto"));
 	}
 
 	//connection
@@ -32,7 +36,6 @@ export class AppGateway
 	//onUser connection
 	@SubscribeMessage('connect_msg')
 	public onConnection(client: Socket, msg: any){
-		console.log("msg.username: %s", msg);
 		if (this.users.has(msg.username))
 			console.log("user already define");
 		else
@@ -40,7 +43,11 @@ export class AppGateway
 	}
 	//envoi d'un msg + mots clé d'action
 	@SubscribeMessage('message')
-	public onMessage(client: Socket, msg: any){
-		console.log("client :%s, msg :%s", client.id, msg);
+	public onMessage(client: Socket, data: any){
+		let player = this.users.get(data.sender.username)
+		let room = this.gameRooms.get(data.room_id);
+		if (player && room)
+			room.onMessageSpe(data.type, player, data);
+		console.log("client :%s, msg :%s", client.id, data);
 	}
 }

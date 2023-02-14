@@ -3,8 +3,8 @@ import { Socket } from "socket.io";
 export default class Player
 {
 	public id: number;
-	public socket: Socket
-	public username: string
+	public socket: Socket;
+	public username: string;
 
 	constructor(socket: Socket, username: string){
 		this.id = 0;
