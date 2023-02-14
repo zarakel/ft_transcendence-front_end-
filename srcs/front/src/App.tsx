@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Chat from './pages/Chat';
 import Profil from './pages/Profil';
+import Game from './pages/Game';
 import MatchHistory from './pages/MatchHistory';
 
 
@@ -20,6 +21,7 @@ const App: FC = () => {
 		<Route element={<Home />} path="/Home" />
 		<Route element={<Chat />} path="/Home/Chat" />
 		<Route element={<Profil />} path="/Home/Profil" />
+		<Route element={<Game />} path="/Game" />
 		<Route element={<MatchHistory />} path="/Home/Profil/MatchHistory" />
       </Routes>
     </BrowserRouter>
