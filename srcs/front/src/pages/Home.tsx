@@ -3,20 +3,23 @@ import logonav from "../pod blanc.svg"
 import iconmenu from "../menu icon.svg"
 import profil from "../profil.svg"
 import { Link } from "react-router-dom";
-import React, { useState } from "react"
+import Game from "./Game"
 
 
 const Home = () => {
+
+	const keyclick = (e: any) => {
+		console.log(e);
+		e.target.value = "ok";
+	}
 
 	const logOut = async () => {
 		localStorage.removeItem("logged_in");
 		document.location.href = "http://localhost:8080";
 	}
 
-	return (
-
-										/* Nav Bar */
-
+	return (						/* Nav Bar */
+	
 		<div className="flex flex-col overflow-auto w-screen h-screen bg-black">
 			<div className="flex flex-row w-screen my-10 h-20 justify-around transition ease-in-out hover:bg-sky-700">
 				<div className="flex my-auto  justify-center w-1/3">
@@ -49,10 +52,7 @@ const Home = () => {
 				</div>
 			</div>
 									{/* espace de jeu */}
-			<div className=" content-center box-border border border-white flex flex-col m-auto w-4/6 h-4/6 rounded-lg justify-center">
-				<img src={logo} className=" my-20 mx-auto w-1/3 scale-75 " alt="" />
-				<button className=" flex mx-auto btn-primary"> Partie Rapide </button>
-			</div>
+				<Game></Game>
 		</div>
 	);
   };

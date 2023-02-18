@@ -31,10 +31,12 @@ export class AppGateway
 		console.log("client disconnect : %s", client.id);
 		this.users.forEach((p: Player, key: string) => {
 			if (p.socket.id == client.id){
-				p.rooms.forEach((id: string)=>{
+				p.rooms.forEach((token: string)=>{
 					let room;
-					if (this.gameRooms.has(id))
-						room = this.gameRooms.get(id);
+					if (token == "lobby")
+						room = this.lobby;
+					else if (this.gameRooms.has(token))
+						room = this.gameRooms.get(token);
 					else throw new Error("Invalid room");
 					room.onleave(p);
 				});
@@ -56,18 +58,19 @@ export class AppGateway
 	@SubscribeMessage('message')
 	public onMessage(client: Socket, data: any){
 		let player = this.users.get(data.sender.username)
-		let room = this.getRoom(data.Roomtoken, data.Roomtype);
+		let room = this.getRoom(data.Roomtoken, data.RoomType);
 		if (player && room)
 			room.onMessageSpe(data.type, player, data);
 		console.log("client :%s, msg :%s, username: %s", client.id, data, data.sender.username);
 	}
 
-	public createGameRoom(token: string, p1: Player, p2: Player){
+	public async createGameRoom(token: string, p1: Player, p2: Player): Promise<GameRoom>{
 		let game = new GameRoom(0, token);
 		game.leftPlayer = p1;
 		game.rightPlayer = p2;
 		this.gameRooms.set(token, game);
 		console.log(`room create id: ${game.getToken()}`)
+		return game;
 	}
 
 	private getRoom(token: string, type: string): Room{
@@ -75,5 +78,7 @@ export class AppGateway
 			return this.lobby;
 		else if (type == "game")
 			return this.gameRooms.get(token);
+		else 
+			return null;
 	}
 }

@@ -23,7 +23,6 @@ export default abstract class Room
 
 	public onMessageSpe(type: string, player: Player, data: any){
 		if (type == "join"){
-			player.rooms.push(this.token);
 			this.onJoin(player, data);
 		}
 		else if (type == "leave"){

@@ -17,9 +17,14 @@ const useSocket = (url: string): any => {
 			socket.emit(type, data);
 	}
 
+	const on = (name: string, callback: any) => {
+		if (socket)
+			return socket.on(name, callback)
+	}
+
 	return {
 		current: socket,
-		emit
+		emit, on
 	}
 }
 

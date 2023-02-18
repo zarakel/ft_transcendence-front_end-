@@ -14,20 +14,34 @@ export default class LobbyRoom extends Room {
 				return ;
 			this.createGame()
 			
-		})
+		}, 50)
 	}
 	public onDestroy() {}
 	public onJoin(player: Player, data: any) {
-		this.users.push(player)
+		if (!this.users.find(((p) => {
+			if (p.username === player.username) return p;
+		}))){
+			player.rooms.push(this.token);
+			this.users.push(player)
+			console.log(`user ${player.username} as join lobby ${this.users}`);
+		}
+		
 	}
 	public onleave(player: Player) {
-		this.users = this.users.filter((p: Player) => p.username !== player.username);
+		this.users = this.users.filter((p: Player) => p !== player);
 	}
 
-	private createGame(){
-		this.gateway.createGameRoom(Math.random().toString(16).substring(2,10),
-			this.users[0], this.users[1])
-		this.onleave(this.users[0]);
-		this.onleave(this.users[1]);
+	private async createGame(){
+		let token = Math.random().toString(16).substring(2,10)
+		this.gateway.createGameRoom(token,
+			this.users[0], this.users[1]).then(room => {
+				[this.users[0], this.users[1]].forEach((p: Player) =>{
+					console.log("emit");
+					p.emit("lobby.match", {
+						token: token
+					})
+					this.onleave(p);
+				})
+			})
 	}
 }
