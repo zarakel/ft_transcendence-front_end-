@@ -8,6 +8,11 @@ import React, { useState } from "react"
 
 const Home = () => {
 
+	const logOut = async () => {
+		localStorage.removeItem("logged_in");
+		document.location.href = "http://localhost:8080";
+	}
+
 	return (
 
 										/* Nav Bar */
@@ -32,6 +37,13 @@ const Home = () => {
 						<h1 className=" my-auto text-2xl text-white">
 							<img src={profil} className=" w-7 my-1 mx-1 float-right" />
 							<Link to="/Home/Profil"> Profil</Link> 
+						</h1>
+					</div>
+				</div>
+				<div className="justify-center w-1/3 flex container-sm">
+					<div className="flex transition ease-in-out hover:scale-110 hover:cursor-pointer">
+						<h1 className=" my-auto text-2xl text-white">
+							<button onClick={logOut}> Log-out </button>
 						</h1>
 					</div>
 				</div>

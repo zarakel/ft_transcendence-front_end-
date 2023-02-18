@@ -6,6 +6,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HomeController } from './home.controller';
 import { HomeService } from './home.service';
+import { LoginController } from './login.controller';
+import { LoginService } from './login.service';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { HomeService } from './home.service';
       synchronize: true,
     }),
   ],
-  controllers: [AppController, HomeController],
-  providers: [AppService, HomeService],
+  controllers: [AppController, HomeController, LoginController],
+  providers: [AppService, HomeService, LoginService],
 })
 export class AppModule {}

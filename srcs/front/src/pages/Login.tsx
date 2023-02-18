@@ -1,43 +1,69 @@
-import useOAuth2 from "../components/use-oauth2";
+import { useEffect } from "react";
+import { useSearchParams, Navigate, redirect } from 'react-router-dom'
 import logo from "../pod blanc.svg"
+import Home from "./Home";
 
-const Login = () => {
-	const { data, loading, error, getAuth } = useOAuth2({
-	  authorizeUrl: "https://api.intra.42.fr/oauth/authorize",
-	  clientId: "u-s4t2ud-f57f1f13919f5d82d8dd1b16b5fcfa4c990fc5dd6b1d48e623676d20d37367d3",
-	  redirectUri: "http://localhost:3000/Home",
-	  scope: "public profile",
-	  responseType: "code",
-	  exchangeCodeForTokenServerURL: "https://your-backend/token",
-	  exchangeCodeForTokenMethod: "POST",
-	  onSuccess: (payload: any) => console.log("Success", payload),
-	  onError: (error_ : any) => console.log("Error", error_)
-	});
-  
-	const isLoggedIn = Boolean(data?.access_token); // or whatever...
-  
-	if (error) {
-	  return <div>Error</div>;
-	}
-  
-	if (loading) {
-	  return <div>Loading...</div>;
-	}
-  
-	if (isLoggedIn) {
-	  return <pre>{JSON.stringify(data)}</pre>;
-	}
-  
-	// couleur bg grise = bg-neutral-500
+const Login = () => { 
 
-	return (
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const useAuth = async (e : any) => {
+		e.preventDefault();
+		const hostname = document.location.hostname;
+
+		let request = await fetch(`http://${hostname}:3000/login/code`, 
+		{
+			method: "POST",
+            headers: 
+			{
+                "Content-Type": "application/json",
+        		'cors': 'true'
+            },
+			body: JSON.stringify({redirect_uri: `http://${hostname}:8080`})
+		});
+
+		let response = await request.json();
+		document.location.href = response.url;
+	}
+
+	const getToken = async () => {
+		let request = await fetch(`http://${document.location.hostname}:3000/login/token/${searchParams.get("code")}`, 
+		{
+			method: "POST",
+            headers: 
+			{
+                "Content-Type": "application/json",
+        		'cors': 'true'
+            }
+		});
+		let response = await request.json();
+		return response.token;
+	}
+
+	useEffect(() => {
+		if (searchParams.get("code") && !localStorage.getItem("logged_in"))
+		{
+			//let t = getToken();
+			console.log("Token is : " + searchParams.get("code"))
+			//localStorage.setItem("logged_in", "true");
+			//localStorage.setItem("token", t.to);
+		}
+		if (localStorage.getItem("logged_in"))
+			document.location.href = `http://${document.location.hostname}:${document.location.port}/home`;
+	}, [])
+
+
+
+
+	return  ( 
 		<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
 			<header className= "space-y-32 mt-80">
 				<img src={logo} className= "scale-125 transition ease-in-out delay-150 fill-black hover:scale-150 duration-300" />
-				<button className ="btn-primary" onClick={() => getAuth()}> Connection </button>
+				<button className ="btn-primary" onClick={useAuth}> Log-in </button>
 			</header>
-	  </div>
+		</div>
 	);
+
   };
 
   export default Login;

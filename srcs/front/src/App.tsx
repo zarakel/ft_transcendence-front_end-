@@ -1,6 +1,5 @@
 import {FC} from 'react';
 import './App.css';
-import OAuthPopup from './components/OAuthPopup';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -16,13 +15,12 @@ const App: FC = () => {
 
 	<BrowserRouter>
       <Routes>
-        <Route element={<OAuthPopup />} path="/callback" />
 		<Route element={<Login />} path="/" />
-		<Route element={<Home />} path="/Home" />
-		<Route element={<Chat />} path="/Home/Chat" />
-		<Route element={<Profil />} path="/Home/Profil" />
-		<Route element={<Game />} path="/Game" />
-		<Route element={<MatchHistory />} path="/Home/Profil/MatchHistory" />
+		<Route element={<Home />} path="/home" />
+		<Route element={<Chat />} path="/home/chat" />
+		<Route element={<Profil />} path="/home/profil" />
+		<Route element={<Game />} path="/game" />
+		<Route element={<MatchHistory />} path="/home/profil/matchHistory" />
       </Routes>
     </BrowserRouter>
   );
