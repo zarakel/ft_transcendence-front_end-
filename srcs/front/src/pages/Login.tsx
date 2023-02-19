@@ -40,16 +40,14 @@ const Login = () => {
 	}
 
 	useEffect(() => {
-		if (searchParams.get("code") && !localStorage.getItem("acces_token"))
+		if (searchParams.get("code") && !localStorage.getItem("access_token"))
 		{
 			let req = getToken();
-			//req.then(res => (localStorage.setItem("acces_token", res)));
+			req.then(response => response.json().then((res) => {
+				localStorage.setItem("access_token", res.access_token);
+			}));
 		}
-			//req.then(response => response.json().then(tok => localStorage.setItem("token", tok)));
-			//console.log("Token is : " + localStorage.getItem("token"));
-			//localStorage.setItem("logged_in", "true");
-			//localStorage.setItem("token", t.to);
-		if (localStorage.getItem("acces_token"))
+		if (localStorage.getItem("access_token"))
 			document.location.href = `http://${document.location.hostname}:${document.location.port}/home`;
 		
 			return () => {};

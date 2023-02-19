@@ -22,6 +22,6 @@ export class LoginController {
   async getToken(@Param("code") code: string): Promise<any>
   {
     let token = await this.login_service.convertCode(code);
-    return JSON.stringify({acces_token: token});
+    return JSON.stringify({access_token: token});
   }
 }

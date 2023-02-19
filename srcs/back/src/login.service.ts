@@ -7,6 +7,7 @@ export class LoginService {
     let request = await fetch("https://api.intra.42.fr/oauth/token", 
 		{
       method: "POST",
+      headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
         grant_type: "authorization_code",
         client_id: process.env.CLIENT_ID,
@@ -16,6 +17,7 @@ export class LoginService {
       })
 		});
     let rep = await request.json()
-    return rep.acces_token;
+    console.log("coucou : " + rep.access_token);
+    return rep.access_token;
   }
 }
