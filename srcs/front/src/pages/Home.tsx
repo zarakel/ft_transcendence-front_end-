@@ -14,7 +14,7 @@ const Home = () => {
 	}
 
 	const logOut = async () => {
-		localStorage.removeItem("logged_in");
+		localStorage.removeItem("acces_token");
 		document.location.href = "http://localhost:8080";
 	}
 

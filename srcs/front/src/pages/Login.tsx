@@ -26,8 +26,8 @@ const Login = () => {
 		document.location.href = response.url;
 	}
 
-	const getToken = async () => {
-		let request = await fetch(`http://${document.location.hostname}:3000/login/token/${searchParams.get("code")}`, 
+	const getToken = () => {
+		let request = fetch(`http://${document.location.hostname}:3000/login/token/${searchParams.get("code")}`, 
 		{
 			method: "POST",
             headers: 
@@ -36,20 +36,23 @@ const Login = () => {
         		'cors': 'true'
             }
 		});
-		let response = await request.json();
-		return response.token;
+		return request;
 	}
 
 	useEffect(() => {
-		if (searchParams.get("code") && !localStorage.getItem("logged_in"))
+		if (searchParams.get("code") && !localStorage.getItem("acces_token"))
 		{
-			//let t = getToken();
-			console.log("Token is : " + searchParams.get("code"))
+			let req = getToken();
+			//req.then(res => (localStorage.setItem("acces_token", res)));
+		}
+			//req.then(response => response.json().then(tok => localStorage.setItem("token", tok)));
+			//console.log("Token is : " + localStorage.getItem("token"));
 			//localStorage.setItem("logged_in", "true");
 			//localStorage.setItem("token", t.to);
-		}
-		if (localStorage.getItem("logged_in"))
+		if (localStorage.getItem("acces_token"))
 			document.location.href = `http://${document.location.hostname}:${document.location.port}/home`;
+		
+			return () => {};
 	}, [])
 
 
