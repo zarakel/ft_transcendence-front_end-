@@ -9,8 +9,11 @@ export class User {
   username: string;
 
   @Column()
-  default_username: string;
+  login: string;
 
   @Column()
   profile_pic: string;
+
+  @Column({default: 500})
+  mmr: number; 
 }

@@ -16,8 +16,21 @@ export class LoginService {
         redirect_uri: "http://localhost:8080"
       })
 		});
-    let rep = await request.json()
-    console.log("coucou : " + rep.access_token);
-    return rep.access_token;
+    let rep = await request.json();
+    return rep;
   }
+
+  async getUser(token: string): Promise<any>
+  {
+    let request = await fetch("https://api.intra.42.fr/v2/me", 
+		{
+      method: "GET",
+      headers: {'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`}
+		});
+    let rep = await request.json();
+    return rep;
+  }
+
+  
 }

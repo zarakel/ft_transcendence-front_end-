@@ -1,27 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './database/user.entity';
+import { User } from './modules/database/user.entity';
 import { AppGateway } from './app.gateway';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HomeController } from './home.controller';
 import { HomeService } from './home.service';
-import { LoginController } from './login.controller';
-import { LoginService } from './login.service';
+import { LoginController } from './modules/login/login.controller';
+import { LoginService } from './modules/login/login.service';
+import { databaseService } from './modules/database/database.service';
 
 @Module({
   imports: [
     AppGateway,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'postgresql',
-      port: 5432,
-      username: 'toto',
-      password: 'toto',
-      database: 'transcendence',
-      entities: [User],
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(databaseService.getConfig()),
   ],
   controllers: [AppController, HomeController, LoginController],
   providers: [AppService, HomeService, LoginService],
