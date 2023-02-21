@@ -39,31 +39,36 @@ const Login = () => {
 		return request;
 	}
 
-	useEffect(() => {
+	useEffect(() => 
+	{
 		if (searchParams.get("code") && !localStorage.getItem("access_token"))
 		{
 			let req = getToken();
 			req.then(response => response.json().then((res) => {
-				localStorage.setItem("access_token", res.access_token);
+				Object.entries(res).forEach(([key, value]) => {
+					localStorage.setItem(key, value as string);
+				  });
 			}));
+			if (localStorage.getItem("new") && localStorage.getItem("access_token"))
+				document.location.href = "http://localhost:8080/home/profil";
+			else if (localStorage.getItem("access_token"))
+				document.location.href = "http://localhost:8080/home";
 		}
-		if (localStorage.getItem("access_token"))
-			document.location.href = `http://${document.location.hostname}:${document.location.port}/home`;
-		
-			return () => {};
+		return () => {};
 	}, [])
 
 
-
-
-	return  ( 
-		<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
-			<header className= "space-y-32 mt-80">
-				<img src={logo} className= "scale-125 transition ease-in-out delay-150 fill-black hover:scale-150 duration-300" />
-				<button className ="btn-primary" onClick={useAuth}> Log-in </button>
-			</header>
-		</div>
-	);
+	if (localStorage.getItem("access_token"))
+		return <Navigate to='/home'/>;
+	else
+		return  ( 
+			<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
+				<header className= "space-y-32 mt-80">
+					<img src={logo} className= "scale-125 transition ease-in-out delay-150 fill-black hover:scale-150 duration-300" />
+					<button className ="btn-primary" onClick={useAuth}> Log-in </button>
+				</header>
+			</div>
+		);
 
   };
 
