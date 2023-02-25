@@ -7,8 +7,12 @@ export default class GameRoom extends Room
 	public rightPlayer: Player;
 	private rightP: boolean = false;
 	private leftP: boolean = false;
-	private ly: number;
-	private ry: number;
+	private PONG_W: number = 600;
+	private PONG_H: number = 400;
+	private PLAYER_W: number = 5;
+	private PLAYER_H: number = this.PONG_H * 0.3;
+	private ly: number = this.PONG_H / 2 - (this.PONG_H * 0.3) / 2;
+	private ry: number = this.ly;
 	
 	constructor(id: number, token: string)
 	{
@@ -32,7 +36,7 @@ export default class GameRoom extends Room
 		if (this.users.find((p: Player) => {if(p.username === player.username) return p;}) === undefined){
 			player.rooms.push(this.token);
 			this.users.push(player);
-			console.log(`player ${player.username} joined ${this.id} as ${player.pos}`)
+			console.log(`player: ${player.username} join: ${this.id} status: ${player.pos}`)
 		}
 	}
 
@@ -46,7 +50,8 @@ export default class GameRoom extends Room
 
 	public onCreate() {
 		this.processMessage("movePaddle", (player: Player, data: any) => {
-			console.log("move", data);
+			if (data.pos === "left"){this.ly = data.y;}
+			if (data.pos === "right"){this.ry = data.y;}
 			player.emit("game.move", data);
 		})
 	}

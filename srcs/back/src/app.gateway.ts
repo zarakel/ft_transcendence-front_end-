@@ -28,7 +28,6 @@ export class AppGateway
 
 	//diconnect
 	public handleDisconnect(client: Socket){
-		console.log("client disconnect : %s", client.id);
 		this.users.forEach((p: Player, key: string) => {
 			if (p.socket.id == client.id){
 				p.rooms.forEach((token: string)=>{
