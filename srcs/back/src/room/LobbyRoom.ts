@@ -1,3 +1,4 @@
+import { RouterModule } from "@nestjs/core";
 import { lookup } from "dns";
 import Player from "./Player";
 import Room from "./Room";
@@ -36,9 +37,14 @@ export default class LobbyRoom extends Room {
 		this.gateway.createGameRoom(token,
 			this.users[0], this.users[1]).then(room => {
 				[this.users[0], this.users[1]].forEach((p: Player) =>{
-					console.log("emit");
+					let position = "spec";
+					if (p == room.leftPlayer)
+						position = "left";
+					if (p == room.rightPlayer)
+						position = "right";
 					p.emit("lobby.match", {
-						token: token
+						token: token,
+						pos: position
 					})
 					this.onleave(p);
 				})

@@ -1,3 +1,4 @@
+import { map } from "rxjs";
 import { AppGateway } from "src/app.gateway";
 import Player from "./Player";
 
@@ -7,21 +8,25 @@ export default abstract class Room
 	protected token: string;
 	protected users: Array<Player>
 	protected gateway: AppGateway;
+	protected waitMessage: Map<string, (player: Player, data: any) => any>;
 
 	constructor(id: number, token: string)
 	{
 		this.id = id;
 		this.token = token;
 		this.users = new Array<Player>();
+		this.waitMessage = new Map();
 		this.onCreate();
 	}
 
 	public getToken(): string{
 		return this.token;
 	}
-	protected onMessage(type: string, data: any){}
+	protected processMessage(type: string, callback: (player: Player, data: any) => any){
+		this.waitMessage.set(type, callback);
+	}
 
-	public onMessageSpe(type: string, player: Player, data: any){
+	public onMessage(type: string, player: Player, data: any){
 		if (type == "join"){
 			this.onJoin(player, data);
 		}
@@ -29,6 +34,9 @@ export default abstract class Room
 			if (player.rooms)
 				player.rooms = player.rooms.filter((room: string) => room != this.token);
 			this.onleave(player);
+		}
+		if (this.waitMessage.has(type)){
+			this.waitMessage.get(type)(player, data);
 		}
 	}
 

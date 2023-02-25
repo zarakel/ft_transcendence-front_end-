@@ -7,6 +7,8 @@ export default class GameRoom extends Room
 	public rightPlayer: Player;
 	private rightP: boolean = false;
 	private leftP: boolean = false;
+	private ly: number;
+	private ry: number;
 	
 	constructor(id: number, token: string)
 	{
@@ -42,7 +44,12 @@ export default class GameRoom extends Room
 		this.users = this.users.filter((p: Player) => p !== player)
 	}
 
-	public onCreate() {}
+	public onCreate() {
+		this.processMessage("movePaddle", (player: Player, data: any) => {
+			console.log("move", data);
+			player.emit("game.move", data);
+		})
+	}
 
 	public onDestroy() {}
 }

@@ -48,9 +48,7 @@ export class AppGateway
 	//onUser connection
 	@SubscribeMessage('connect_msg')
 	public onConnection(client: Socket, data: any){
-		if (this.users.has(data.sender.username))
-			console.log("user already define");
-		else
+		if (!this.users.has(data.sender.username))
 			this.users.set(data.sender.username, new Player(client, data.sender.username))
 	}
 
@@ -60,8 +58,8 @@ export class AppGateway
 		let player = this.users.get(data.sender.username)
 		let room = this.getRoom(data.Roomtoken, data.RoomType);
 		if (player && room)
-			room.onMessageSpe(data.type, player, data);
-		console.log("client :%s, msg :%s, username: %s", client.id, data, data.sender.username);
+			room.onMessage(data.type, player, data);
+		//console.log("client :%s, msg :%s, username: %s", client.id, data, data.sender.username);
 	}
 
 	public async createGameRoom(token: string, p1: Player, p2: Player): Promise<GameRoom>{

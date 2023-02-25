@@ -1,29 +1,33 @@
 //import useSocket from "../hooks/useSocket";
+import useCanvas from "../hooks/useCanvas";
 import { io } from "socket.io-client";
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import logo from "../balle blanche.svg"
+import logo from "../balle blanche.svg";
+import styles from "../styles/game.module.scss";
+import { useParams } from 'react-router-dom';
 
 const Game = () => {
-	const style = {color: "white"}
 	//const socket = useSocket("http://localhost:3000");
 	let socket = io("http://localhost:3000");
 	const [searching, setSearching] = useState(false);
 	const [Match, setMatch] = useState(false);
-	let navigate = useNavigate();
 	const [pseudo, setpseudo] = useState('');
+	const [position, setPosition] = useState('spec');
+
+	const {id} = useParams();
+	let navigate = useNavigate();
 
 	socket.on("lobby.match", (data: any) => {
 		console.log(`game created ${data.token}`);
 		navigate(`/home/${data.token}`)
 		setSearching(false);
 		setMatch(true);
+		setPosition(data.pos);
 	});
+
+	//temp
 	function join(){
-		socket.on("connect", () => {
-			console.log("connected");
-			//setSocket(socket);
-		})
 		socket.emit("connect_msg", {sender :
 			{id: socket.id ,username: pseudo}});
 		socket.emit("message", {sender :
@@ -32,17 +36,40 @@ const Game = () => {
 		setSearching(true);
 	}
 
+	//play
+	const canvasRef = useCanvas();
+
+	const handleMove = (e: any) => {
+		let canvas = e.target;
+		let canvaRect = canvas.getBoundingClientRect()
+		let y = 0;
+		if (canvaRect)
+			y = e.clientY - canvaRect.y;
+		console.log("move", position, pseudo, id, y);
+		socket.emit("message", {type: "movePaddle", RoomType: "game", Roomtoken: id, sender :
+			{id: socket.id ,username: pseudo, pos: position, y: y}})
+	}
+
+	socket.on("game.move", (data: any) => {
+		console.log(data);
+		canvasRef.updatePlayer(data.y, data.pos)
+	});
+
 	return (
-	<div className=" content-center box-border border border-white flex flex-col m-auto w-4/6 h-4/6 rounded-lg justify-center">
+	<div className={styles.game_screen}>
 		{!searching && !Match &&
-		<div className=" content-center flex flex-col m-auto w-4/6 h-4/6 rounded-lg justify-center">
-		<img src={logo} className=" my-20 mx-auto w-1/3 scale-75 " alt="" />
+		<div className={styles.game_menu}>
+		<img src={logo} className={styles.game_img} alt="" />
 			<input id="pseudo" type="text" value={pseudo} onChange={(e)=> {setpseudo(e.target.value);}}/>
-			<button className=" flex mx-auto btn-primary" onClick={join}> Partie Rapide </button>
+			<button className="flex mx-auto my-3 btn-primary" onClick={join}> Partie Rapide </button>
 		</div>
 		}
-		{searching && !Match && <div className="justify-center content-center"><h1 style={style}>SEARCHING</h1></div>}
-		{!searching && Match && <div className="justify-center content-center"><h1 style={style}>STARTING</h1></div>}
+		{searching && !Match && <div className={styles.game_loading}>
+			<h1 className={styles.game_msg}>SEARCHING</h1>
+			</div>}
+		{!searching && Match && <div className={styles.game}>
+			<canvas ref={canvasRef} onMouseMove={handleMove}/>
+			</div>}
 	</div>);
   };
 

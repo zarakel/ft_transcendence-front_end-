@@ -1,0 +1,35 @@
+.game_screen {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game_menu {
+	text-align: center;
+	outline: 2px solid white;
+	border-radius: 20px;
+	width: 50%;
+}
+
+.game_img {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5%;
+	margin-bottom: 5%;
+	width: 50%;
+	border: 2px solid  white;
+}
+
+.game_loading {
+	text-align: center;
+	content: center;
+}
+
+.game {
+	text-align: center;
+	content: center;
+}
+
+.game_msg {
+	color: white;
+}
