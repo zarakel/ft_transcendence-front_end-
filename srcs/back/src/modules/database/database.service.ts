@@ -8,12 +8,7 @@ class DatabaseService
     constructor()
     {
         this.dataSource = new DataSource(this.getConfig());
-        this.dataSource.initialize().then(() => {
-            console.log("Data Source has been initialized!")
-        })
-        .catch((err) => {
-            console.error("Error during Data Source initialization", err)
-        })
+        this.dataSource.initialize();
     }
 
     public getConfig(): DataSourceOptions
@@ -40,6 +35,7 @@ class DatabaseService
         const newUser = new User();
         newUser.login = user.login;
         newUser.username = user.login;
+        newUser.profile_pic = user.image.link;
 
         await this.dataSource.manager.save(newUser);
     }

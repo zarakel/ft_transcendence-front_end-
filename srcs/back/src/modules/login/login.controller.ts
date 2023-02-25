@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Inject } from '@nestjs/common';
+import { Body, Controller, Param, Post, Inject, Get } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { databaseService } from '../database/database.service';
 import { User } from '../database/user.entity';
@@ -20,27 +20,36 @@ export class LoginController {
 		return JSON.stringify({url: url.toString()});
 	}
 
-  /*
-      Object.entries(rep).forEach(([key, value]) => {
-      console.log(`coucou : ${key}  -->  ${value}`);
-    });
-  */
-
 	@Post('token/:code')
 	async getToken(@Param("code") code: string): Promise<any>
 	{
 		let token = await this.login_service.convertCode(code);
-		let user = await this.login_service.getUser(token.access_token);
+		let ft_user = await this.login_service.getUser(token.access_token);
 
 		let ds = databaseService.getDataSource();
-		let exist = ds.manager.findBy(User, {login: user.login});
+		let exist = await ds.manager.findBy(User, {login: ft_user.login});
 
-		if (exist)
-			return (JSON.stringify({...user, "new":"0"}));
+		if (exist[0])
+			return (JSON.stringify({access_token: token.access_token}));
 		else
 		{
-			databaseService.insertUser(user);
-			return (JSON.stringify({...user, "new":"1"})); 
+			await databaseService.insertUser(ft_user);
+			return (JSON.stringify({new: "true", access_token: token.access_token})); 
 		}
 	}
+
+	@Get('test')
+	async test()
+	{
+		let ds = databaseService.getDataSource();
+		let exist = await ds.manager.findBy(User, {login: "toto"});
+		console.log(exist);
+		if (exist[0])
+			console.log("toto");
+		else
+			console.log("tata");
+
+		return exist;
+	}
 }
+
