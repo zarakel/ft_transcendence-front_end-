@@ -9,7 +9,7 @@ const useSocket = (url: string): any => {
 			console.log("connected");
 			socket.emit("connect_msg", {username: socket.id});
 			setSocket(socket);
-		}) 
+		}); 
 	}, [url])
 
 	const emit = (type: string, data: any) => {

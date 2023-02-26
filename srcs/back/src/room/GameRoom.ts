@@ -19,21 +19,13 @@ export default class GameRoom extends Room
 		super(id, token);
 	}
 
-	public onJoin(player: Player) {
-		let pos = "spec";
-		if (!this.leftPlayer && !this.leftP){
-			this.leftPlayer = player;
-			this.leftP = true;
-			pos = "left";
-		}
-		else if (!this.rightPlayer && !this.rightP){
-			this.rightPlayer = player;
-			this.rightP = true;
-			pos = "right";
-		}
-		player.pos = pos;
+	public onJoin(player: Player, data: any) {
+		if (player.username === this.leftPlayer.username || player.username === this.rightPlayer.username)
+			player.pos = data.sender.pos;
+		else
+			player.pos = "spec";
 		player.score = 0;
-		if (this.users.find((p: Player) => {if(p.username === player.username) return p;}) === undefined){
+		if (this.users.find((p: Player) => {if (p.username === player.username) return p;}) === undefined){
 			player.rooms.push(this.token);
 			this.users.push(player);
 			console.log(`player: ${player.username} join: ${this.id} status: ${player.pos}`)
@@ -46,13 +38,27 @@ export default class GameRoom extends Room
 		else if (this.rightPlayer && player.id === this.rightPlayer.id)
 			this.rightP = false;
 		this.users = this.users.filter((p: Player) => p !== player)
+		console.log(`player ${player.username} leaved ${this.id}`)
+		if (!this.leftP || !this.rightP)
+		{
+			let winner = "right";
+			if (this.leftP)
+				winner = "left";
+			this.users.forEach(p => {
+				p.emit("game.stop", {winner: winner, expt: "deconnection"})
+			});
+		}
 	}
 
 	public onCreate() {
 		this.processMessage("movePaddle", (player: Player, data: any) => {
-			if (data.pos === "left"){this.ly = data.y;}
-			if (data.pos === "right"){this.ry = data.y;}
-			player.emit("game.move", data);
+			if (data.pos === "left"){data.sender.y = this.ly;}
+			if (data.pos === "right"){data.sender.y = this.ry;}
+			this.users.forEach(p => {
+				if (p.username !== data.sender.username){
+					p.emit("game.move", data); 
+				}
+			});
 		})
 	}
 

@@ -29,7 +29,7 @@ const useCanvas = (size: any, update: fctUpdate, drawPlayerAndBall: fctDrawPlaye
 		})();
 
 		return () =>  window.cancelAnimationFrame(anim)
-	})
+	}, [drawPlayerAndBall, update])
 
 	//useEffect(() => resize(), []);
 
