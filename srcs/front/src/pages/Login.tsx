@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import { useSearchParams, Navigate, redirect, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import logo from "../pod blanc.svg"
-import Home from "./Home";
 
 const Login = () => { 
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	let navigate = useNavigate();
+	const [token, setToken] = useState(false);
 
 	const useAuth = async (e : any) => {
 		e.preventDefault();
@@ -44,7 +44,7 @@ const Login = () => {
 		if (searchParams.get("code") && !localStorage.getItem("access_token"))
 		{
 			let req = getToken();
-	
+			setToken(true);
 			req.then(response => response.json().then((res) => {
 				Object.entries(res).forEach(([key, value]) => {
 					localStorage.setItem(key, value as string);
@@ -58,7 +58,7 @@ const Login = () => {
 		}
 		else if (localStorage.getItem("access_token"))
 			navigate("/home");
-	}, []);
+	}, [token]);
 	return  ( 
 		<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
 			<header className= "space-y-32 mt-80">
