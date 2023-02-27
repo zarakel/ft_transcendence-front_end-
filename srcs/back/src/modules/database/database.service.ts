@@ -5,8 +5,7 @@ class DatabaseService
 {
     private dataSource: DataSource;
 
-    constructor()
-    {
+    constructor() {
         this.dataSource = new DataSource(this.getConfig());
         this.dataSource.initialize();
     }
@@ -20,8 +19,7 @@ class DatabaseService
             username: 'toto',
             password: 'toto',
             database: 'transcendence',
-            entities: [User],
-            synchronize: true
+            entities: [User]
         };
     }
 
@@ -35,7 +33,8 @@ class DatabaseService
         const newUser = new User();
         newUser.login = user.login;
         newUser.username = user.login;
-        newUser.profile_pic = user.image.link;
+        const image = await fetch(user.image.versions.small);
+        newUser.profile_pic = Buffer.from(await image.arrayBuffer()).toString('base64');
 
         await this.dataSource.manager.save(newUser);
     }
