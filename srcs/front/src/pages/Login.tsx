@@ -40,23 +40,25 @@ const Login = () => {
 		return request;
 	}
 
-	if (searchParams.get("code") && !localStorage.getItem("access_token"))
-	{
-		let req = getToken();
-
-		req.then(response => response.json().then((res) => {
-			Object.entries(res).forEach(([key, value]) => {
-				localStorage.setItem(key, value as string);
-			  });
-		}));
-	}
-	if (localStorage.getItem("new") && localStorage.getItem("access_token"))
-	{
-		localStorage.removeItem("new");
-		navigate("/home/profil");
-	}
-	else if (localStorage.getItem("access_token"))
-		navigate("/home");
+	useEffect(() => {
+		if (searchParams.get("code") && !localStorage.getItem("access_token"))
+		{
+			let req = getToken();
+	
+			req.then(response => response.json().then((res) => {
+				Object.entries(res).forEach(([key, value]) => {
+					localStorage.setItem(key, value as string);
+				  });
+			}));
+		}
+		if (localStorage.getItem("new") && localStorage.getItem("access_token"))
+		{
+			localStorage.removeItem("new");
+			navigate("/home/profil");
+		}
+		else if (localStorage.getItem("access_token"))
+			navigate("/home");
+	}, []);
 	return  ( 
 		<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
 			<header className= "space-y-32 mt-80">

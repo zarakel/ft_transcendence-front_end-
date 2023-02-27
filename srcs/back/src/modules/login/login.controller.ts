@@ -25,7 +25,6 @@ export class LoginController {
 	{
 		let token = await this.login_service.convertCode(code);
 		let ft_user = await this.login_service.getUser(token.access_token);
-		console.log(JSON.stringify(ft_user))
 
 		let ds = databaseService.getDataSource();
 		let exist = await ds.manager.findBy(User, {login: ft_user.login});
