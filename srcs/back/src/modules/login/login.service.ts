@@ -31,6 +31,6 @@ export class LoginService {
         'Authorization': `Bearer ${token}`
       }
 		});
-    return await request.json();
+    return await request.text();
   }  
 }

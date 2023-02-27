@@ -4,7 +4,7 @@ import logo from "../pod blanc.svg"
 
 const Login = () => { 
 
-	const [searchParams, setSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 	let navigate = useNavigate();
 	const [token, setToken] = useState(false);
 
@@ -41,24 +41,33 @@ const Login = () => {
 	}
 
 	useEffect(() => {
-		if (searchParams.get("code") && !localStorage.getItem("access_token"))
+		let code = searchParams.get("code");
+		if (code && !localStorage.getItem("access_token"))
 		{
 			let req = getToken();
-			setToken(true);
 			req.then(response => response.json().then((res) => {
 				Object.entries(res).forEach(([key, value]) => {
 					localStorage.setItem(key, value as string);
 				  });
 			}));
+			//setToken(true);
 		}
-		if (localStorage.getItem("new") && localStorage.getItem("access_token"))
-		{
-			localStorage.removeItem("new");
-			navigate("/home/profil");
-		}
-		else if (localStorage.getItem("access_token"))
-			navigate("/home");
-	}, [token]);
+		
+		return () => {}
+	}, []);
+
+	useEffect(() => {
+		const hostname = document.location.hostname;
+		setTimeout(() => {
+			if (localStorage.getItem("new") && localStorage.getItem("access_token")){
+				localStorage.removeItem("new");
+				document.location.href = `http://${hostname}:8080/home/profil`;
+			}
+			else if (localStorage.getItem("access_token"))
+				document.location.href = `http://${hostname}:8080/home`;
+		}, 500);
+	}, [localStorage]);
+
 	return  ( 
 		<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
 			<header className= "space-y-32 mt-80">
