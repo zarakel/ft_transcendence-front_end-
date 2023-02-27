@@ -57,8 +57,9 @@ const Game = () => {
 	}
 	
 	const [searching, setSearching] = useState(false);
-	const [Match, setMatch] = useState(false);
+	const [match, setMatch] = useState(false);
 	const [pseudo, setpseudo] = useState('');
+	const [start, setStart] = useState(false);
 	const [position, setPosition] = useState('spec');
 	const [size, setSize] = useState<any>({w: PONG_W, h: PONG_H});
 	const [player1, setPlayer1] = useState<any>({});
@@ -67,47 +68,53 @@ const Game = () => {
 
 	const {id} = useParams();
 	const socket = useSocket("http://localhost:3000");
-	let navigate = useNavigate();
+	const navigate = useNavigate();
 
-	useEffect(() => {
-		let token = id;
-		socket.on("lobby.match", (data: any) => {
-			console.log(`game created ${data.token}`);
-			navigate(`/home/${data.token}`)
-			setPosition(data.pos);
+	socket.on("lobby.match", (data: any) => {
+		if (data.sender.username == pseudo){
+			console.log(`game created ${data.token} ${data.sender.pos}`);
 			if (socket.current)
 				socket.emit("message", {sender :
-					{id: socket.current.id ,username: pseudo, pos: data.pos
-				}, Roomtoken: data.token, RoomType: "game", type: "join"})
+					{id: socket.current.id ,username: pseudo, pos: data.sender.pos
+				}, Roomtoken: data.token, RoomType: "game", type: "join"});
 			setSearching(false);
 			setMatch(true);
+			setPosition(data.sender.pos);
 			setPlayer1({y: size.h / 2 - (size.h * 0.3) / 2})
 			setPlayer2({y: size.h / 2 - (size.h * 0.3) / 2})
 			setBall({x: PONG_W / 2, y: PONG_H / 2, r: 5});
+		}
+	});
+
+	useEffect(() => {
+		let token = id;
+
+		socket.on("game.join", (data: any) => {
+			if (data.sender.username === pseudo){
+			 	navigate(`/home/${data.token}`);
+			}
 		});
-
-		socket.on("game.stop", (data: any) => {
-			console.log(data.winner, data.expt);
-			navigate(`/home`);
-		})
-
+	
 		socket.on("game.move", (data: any) => {
 			if (data.sender.pos === position) return ;
-			if (data.sender.pos === "left"){setPlayer1({y: data.sender.y}); }
+			if (data.sender.pos === "left"){setPlayer1({y: data.sender.y});}
 			if (data.sender.pos === "right"){setPlayer2({y: data.sender.y});}
 		});
 
 		return () => {
-			if (socket.current)
+			if (socket.current){
+				console.log("passe in return");
 				socket.emit("message", {sender :
 					{id: socket.current.id ,username: pseudo, pos: position
 				}, Roomtoken: token, RoomType: "game", type: "leave"});
+				navigate('/home');
+			}
 		}
-	}, [socket.ready]);
-	
+	}, [match]);
+
 	//----------------------------canva------------------------------------------
 
-	const drawPlayer = (context: CanvasRenderingContext2D) => {
+	const drawPlayers = (context: CanvasRenderingContext2D) => {
 		context.fillStyle = 'white';
 		//player1 left
 		context.fillRect(0, player1.y, PLAYER_W, PLAYER_H);
@@ -125,7 +132,7 @@ const Game = () => {
 
 	const drawPlayerAndBall = (context: CanvasRenderingContext2D) => {
 		//console.log("passe");
-		drawPlayer(context);
+		drawPlayers(context);
 		drawBall(context);
 	};
 
@@ -156,7 +163,7 @@ const Game = () => {
 	return (
 		<div className={styles.game_screen}>
 			{
-				!searching && !Match &&
+				!searching && !match &&
 				<div className={styles.game_menu}>
 					<img className={styles.game_img} src={logo} alt="" />
 					<input id="pseudo" type="text" value={pseudo} onChange={(e)=> {setpseudo(e.target.value);}}/>
@@ -164,14 +171,14 @@ const Game = () => {
 				</div>
 			}
 			{
-				searching && !Match && 
+				searching && !match && 
 					<div className={styles.game_loading}>
 						<img src={logo} className={styles.game_img} alt="" />
 						<h1 className={styles.game_msg}>SEARCHING...</h1>
 					</div>
 			}
 			{
-				!searching && Match && 
+				!searching && match && 
 				<div className={styles.game}>
 					<canvas className={styles.game_canvas} ref={canvasRef.canvasRef} onMouseMove={handleMove} width={PONG_W} height={PONG_H}/>
 				</div>

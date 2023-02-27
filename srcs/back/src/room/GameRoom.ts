@@ -28,6 +28,9 @@ export default class GameRoom extends Room
 		if (this.users.find((p: Player) => {if (p.username === player.username) return p;}) === undefined){
 			player.rooms.push(this.token);
 			this.users.push(player);
+			this.users.forEach(p => {
+				p.emit("game.join", {sender: data.sender, token: this.token});
+			});
 			console.log(`player: ${player.username} join: ${this.id} status: ${player.pos}`)
 		}
 	}
