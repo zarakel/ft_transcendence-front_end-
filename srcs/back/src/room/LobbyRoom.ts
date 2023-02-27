@@ -24,7 +24,7 @@ export default class LobbyRoom extends Room {
 		}))){
 			player.rooms.push(this.token);
 			this.users.push(player)
-			console.log(`user ${player.username} as join lobby ${this.users}`);
+			console.log(`user ${player.username} as join lobby`);
 		}
 		
 	}
@@ -43,11 +43,11 @@ export default class LobbyRoom extends Room {
 					if (p == room.rightPlayer)
 						position = "right";
 					p.emit("lobby.match", {
-						token: token,
-						pos: position
+						sender: {id: p.socket.id, username: p.username, pos: position},
+						token: token
 					})
 					this.onleave(p);
-				})
-			})
+				});
+			});
 	}
 }
