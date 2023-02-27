@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './modules/database/user.entity';
 import { AppGateway } from './app.gateway';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,7 +12,9 @@ import { databaseService } from './modules/database/database.service';
 @Module({
   imports: [
     AppGateway,
-    TypeOrmModule.forRoot(databaseService.getConfig()),
+    TypeOrmModule.forRoot({...databaseService.getConfig(),
+      synchronize: true
+    }),
   ],
   controllers: [AppController, HomeController, LoginController],
   providers: [AppService, HomeService, LoginService],

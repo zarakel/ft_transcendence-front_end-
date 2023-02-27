@@ -25,12 +25,15 @@ export class LoginController {
 	{
 		let token = await this.login_service.convertCode(code);
 		let ft_user = await this.login_service.getUser(token.access_token);
+		console.log(JSON.stringify(ft_user))
 
 		let ds = databaseService.getDataSource();
 		let exist = await ds.manager.findBy(User, {login: ft_user.login});
 
 		if (exist[0])
-			return (JSON.stringify({access_token: token.access_token}));
+			return (JSON.stringify({access_token: token.access_token, 
+									login: exist[0].login, 
+									username: exist[0].username}));
 		else
 		{
 			await databaseService.insertUser(ft_user);
@@ -42,7 +45,7 @@ export class LoginController {
 	async test()
 	{
 		let ds = databaseService.getDataSource();
-		let exist = await ds.manager.findBy(User, {login: "toto"});
+		let exist = await ds.manager.findBy(User, {login: "lmataris"});
 		console.log(exist);
 		if (exist[0])
 			console.log("toto");
@@ -50,6 +53,14 @@ export class LoginController {
 			console.log("tata");
 
 		return exist;
+	}
+
+	@Get('delete')
+	async del()
+	{
+		let ds = databaseService.getDataSource();
+		let exist = await ds.manager.findBy(User, {login: "lmataris"});
+		await ds.manager.remove(User, exist);
 	}
 }
 

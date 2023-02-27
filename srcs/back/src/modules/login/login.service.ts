@@ -25,12 +25,12 @@ export class LoginService {
     let request = await fetch("https://api.intra.42.fr/v2/me", 
 		{
       method: "GET",
-      headers: {'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`}
+      headers: 
+      {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
 		});
-    let rep = await request.json();
-    return rep;
-  }
-
-  
+    return await request.json();
+  }  
 }

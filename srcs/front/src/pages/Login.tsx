@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { useSearchParams, Navigate, redirect } from 'react-router-dom'
+import { useSearchParams, Navigate, redirect, useNavigate } from 'react-router-dom'
 import logo from "../pod blanc.svg"
 import Home from "./Home";
 
 const Login = () => { 
 
 	const [searchParams, setSearchParams] = useSearchParams();
+	let navigate = useNavigate();
 
 	const useAuth = async (e : any) => {
 		e.preventDefault();
@@ -39,36 +40,31 @@ const Login = () => {
 		return request;
 	}
 
-	useEffect(() => 
+	if (searchParams.get("code") && !localStorage.getItem("access_token"))
 	{
-		if (searchParams.get("code") && !localStorage.getItem("access_token"))
-		{
-			let req = getToken();
-			req.then(response => response.json().then((res) => {
-				Object.entries(res).forEach(([key, value]) => {
-					localStorage.setItem(key, value as string);
-				  });
-			}));
-			if (localStorage.getItem("new") && localStorage.getItem("access_token"))
-				document.location.href = "http://localhost:8080/home/profil";
-			else if (localStorage.getItem("access_token"))
-				document.location.href = "http://localhost:8080/home";
-		}
-		return () => {};
-	}, [])
+		let req = getToken();
 
-
-	if (localStorage.getItem("access_token"))
-		return <Navigate to='/home'/>;
-	else
-		return  ( 
-			<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
-				<header className= "space-y-32 mt-80">
-					<img src={logo} className= "scale-125 transition ease-in-out delay-150 fill-black hover:scale-150 duration-300" />
-					<button className ="btn-primary" onClick={useAuth}> Log-in </button>
-				</header>
-			</div>
-		);
+		req.then(response => response.json().then((res) => {
+			Object.entries(res).forEach(([key, value]) => {
+				localStorage.setItem(key, value as string);
+			  });
+		}));
+	}
+	if (localStorage.getItem("new") && localStorage.getItem("access_token"))
+	{
+		localStorage.removeItem("new");
+		navigate("/home/profil");
+	}
+	else if (localStorage.getItem("access_token"))
+		navigate("/home");
+	return  ( 
+		<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
+			<header className= "space-y-32 mt-80">
+				<img src={logo} className= "scale-125 transition ease-in-out delay-150 fill-black hover:scale-150 duration-300" />
+				<button className ="btn-primary" onClick={useAuth}> Log-in </button>
+			</header>
+		</div>
+	);
 
   };
 
