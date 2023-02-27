@@ -52,8 +52,6 @@ const Login = () => {
 			}));
 			//setToken(true);
 		}
-		
-		return () => {}
 	}, []);
 
 	useEffect(() => {
