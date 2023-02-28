@@ -32,11 +32,20 @@ export class LoginController {
 		if (exist[0])
 			return (JSON.stringify({access_token: token.access_token, 
 									login: exist[0].login, 
-									username: exist[0].username}));
+									username: exist[0].username,
+									profile_pic: exist[0].profile_pic,
+									mmr: exist[0].mmr,
+									id: exist[0].id}));
 		else
 		{
-			await databaseService.insertUser(ft_user);
-			return (JSON.stringify({new: "true", access_token: token.access_token})); 
+			let res = await databaseService.insertUser(ft_user);
+			return (JSON.stringify({new: "true",
+									access_token: token.access_token, 
+									login: res.login, 
+									username: res.username,
+									profile_pic: res.profile_pic,
+									mmr: res.mmr,
+									id: res.id}));
 		}
 	}
 
@@ -45,7 +54,6 @@ export class LoginController {
 	{
 		let ds = databaseService.getDataSource();
 		let exist = await ds.manager.findBy(User, {login: "lmataris"});
-		console.log(exist);
 		if (exist[0])
 			console.log("toto");
 		else

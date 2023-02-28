@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class LoginService {
+export class LoginService 
+{
   async convertCode(code: string): Promise<any>
   {
     let request = await fetch("https://api.intra.42.fr/oauth/token", 
@@ -31,6 +32,6 @@ export class LoginService {
         'Authorization': `Bearer ${token}`
       }
 		});
-    return await request.text();
+    return await request.json();
   }  
 }

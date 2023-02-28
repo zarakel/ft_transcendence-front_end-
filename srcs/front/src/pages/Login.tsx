@@ -7,6 +7,7 @@ const Login = () => {
 	const [searchParams] = useSearchParams();
 	let navigate = useNavigate();
 	const [token, setToken] = useState(false);
+	let code = searchParams.get("code");
 
 	const useAuth = async (e : any) => {
 		e.preventDefault();
@@ -27,8 +28,9 @@ const Login = () => {
 		document.location.href = response.url;
 	}
 
-	const getToken = () => {
-		let request = fetch(`http://${document.location.hostname}:3000/login/token/${searchParams.get("code")}`, 
+	const getToken = () => 
+	{
+		let request = fetch(`http://${document.location.hostname}:3000/login/token/${code}`, 
 		{
 			method: "POST",
             headers: 
@@ -41,7 +43,6 @@ const Login = () => {
 	}
 
 	useEffect(() => {
-		let code = searchParams.get("code");
 		if (code && !localStorage.getItem("access_token"))
 		{
 			let req = getToken();
@@ -50,7 +51,6 @@ const Login = () => {
 					localStorage.setItem(key, value as string);
 				  });
 			}));
-			//setToken(true);
 		}
 	}, []);
 

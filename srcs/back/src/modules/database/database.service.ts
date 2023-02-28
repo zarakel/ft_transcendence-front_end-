@@ -28,7 +28,7 @@ class DatabaseService
         return this.dataSource;
     }
 
-    public async insertUser(user: any): Promise<void>
+    public async insertUser(user: any): Promise<any>
     {
         const newUser = new User();
         newUser.login = user.login;
@@ -37,6 +37,7 @@ class DatabaseService
         newUser.profile_pic = Buffer.from(await image.arrayBuffer()).toString('base64');
 
         await this.dataSource.manager.save(newUser);
+        return newUser;
     }
 }
 
