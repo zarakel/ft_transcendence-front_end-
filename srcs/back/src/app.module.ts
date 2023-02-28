@@ -5,18 +5,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HomeController } from './home.controller';
 import { HomeService } from './home.service';
-import { LoginController } from './modules/login/login.controller';
-import { LoginService } from './modules/login/login.service';
+import { LoginModule } from './modules/login/login.module';
 import { databaseService } from './modules/database/database.service';
 
 @Module({
   imports: [
     AppGateway,
+    LoginModule,
     TypeOrmModule.forRoot({...databaseService.getConfig(),
       synchronize: true
     }),
   ],
-  controllers: [AppController, HomeController, LoginController],
-  providers: [AppService, HomeService, LoginService],
+  controllers: [AppController, HomeController],
+  providers: [AppService, HomeService],
 })
 export class AppModule {}

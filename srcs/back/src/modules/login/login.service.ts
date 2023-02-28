@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class LoginService 
 {
+
+  private jwtService: JwtService;
+
   async convertCode(code: string): Promise<any>
   {
     let request = await fetch("https://api.intra.42.fr/oauth/token", 
@@ -34,4 +38,10 @@ export class LoginService
 		});
     return await request.json();
   }  
+
+  async getCredential(user: any)
+  {
+    const payload = {username: user.login};
+    return {jwt_token: this.jwtService.signAsync(payload)};
+  }
 }

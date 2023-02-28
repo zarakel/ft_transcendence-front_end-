@@ -1,4 +1,5 @@
-import { Body, Controller, Param, Post, Inject, Get } from '@nestjs/common';
+import { Body, Controller, Param, Post, Inject, Get, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { LoginService } from './login.service';
 import { databaseService } from '../database/database.service';
 import { User } from '../database/user.entity';
@@ -31,6 +32,7 @@ export class LoginController {
 
 		if (exist[0])
 			return (JSON.stringify({access_token: token.access_token, 
+									jwt_token: this.login_service.getCredential(exist[0].login),
 									login: exist[0].login, 
 									username: exist[0].username,
 									profile_pic: exist[0].profile_pic,
@@ -41,6 +43,7 @@ export class LoginController {
 			let res = await databaseService.insertUser(ft_user);
 			return (JSON.stringify({new: "true",
 									access_token: token.access_token, 
+									jwt_token: this.login_service.getCredential(res.login),
 									login: res.login, 
 									username: res.username,
 									profile_pic: res.profile_pic,
@@ -49,6 +52,7 @@ export class LoginController {
 		}
 	}
 
+	@UseGuards(AuthGuard('jwt'))
 	@Get('test')
 	async test()
 	{
@@ -62,6 +66,7 @@ export class LoginController {
 		return exist;
 	}
 
+	@UseGuards(AuthGuard('jwt'))
 	@Get('delete')
 	async del()
 	{
