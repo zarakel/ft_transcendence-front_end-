@@ -13,7 +13,7 @@ const Login = () => {
 		e.preventDefault();
 		const hostname = document.location.hostname;
 
-		let request = await fetch(`http://${hostname}:3000/login/code`, 
+		let request = await fetch("http://" + hostname + ":3000/login/code", 
 		{
 			method: "POST",
             headers: 
@@ -21,16 +21,16 @@ const Login = () => {
                 "Content-Type": "application/json",
         		'cors': 'true'
             },
-			body: JSON.stringify({redirect_uri: `http://${hostname}:8080`})
+			body: JSON.stringify({redirect_uri: "http://" + hostname + ":8080"})
 		});
 
 		let response = await request.json();
 		document.location.href = response.url;
 	}
 
-	const getToken = () => 
+	const getToken = async () => 
 	{
-		let request = fetch(`http://${document.location.hostname}:3000/login/token/${code}`, 
+		let request = await fetch("http://" + document.location.hostname + ":3000/login/token/" + code, 
 		{
 			method: "POST",
             headers: 
@@ -39,19 +39,16 @@ const Login = () => {
         		'cors': 'true'
             }
 		});
-		return request;
+		let res = await request.json();
+		Object.entries(res).forEach(([key, value]) => {
+			localStorage.setItem(key, value as string);
+		  });
+		setToken(true);
 	}
 
 	useEffect(() => {
 		if (code && !localStorage.getItem("access_token"))
-		{
-			let req = getToken();
-			req.then(response => response.json().then((res) => {
-				Object.entries(res).forEach(([key, value]) => {
-					localStorage.setItem(key, value as string);
-				  });
-			}));
-		}
+			getToken();
 	}, []);
 
 	useEffect(() => {
@@ -59,12 +56,12 @@ const Login = () => {
 		setTimeout(() => {
 			if (localStorage.getItem("new") && localStorage.getItem("access_token")){
 				localStorage.removeItem("new");
-				document.location.href = `http://${hostname}:8080/home/profil`;
+				document.location.href = "http://" + hostname + ":8080/home/profil";
 			}
 			else if (localStorage.getItem("access_token"))
-				document.location.href = `http://${hostname}:8080/home`;
+				document.location.href = "http://" + hostname + ":8080/home";
 		}, 500);
-	}, [localStorage]);
+	}, [token]);
 
 	return  ( 
 		<div className= "overflow-auto w-screen h-screen flex flex-col bg-black items-center text-center ">
