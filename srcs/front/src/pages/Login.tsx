@@ -54,7 +54,11 @@ const Login = () => {
 	useEffect(() => {
 		const hostname = document.location.hostname;
 		setTimeout(() => {
-			if (localStorage.getItem("access_token"))
+			if (localStorage.getItem("new") && localStorage.getItem("access_token")){
+				localStorage.removeItem("new");
+				document.location.href = "http://" + hostname + ":8080/home/profil";
+			}
+			else if (localStorage.getItem("access_token"))
 				document.location.href = "http://" + hostname + ":8080/home";
 		}, 500);
 	}, [token]);

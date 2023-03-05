@@ -1,9 +1,15 @@
 import { Link } from "react-router-dom";
 import {useState} from "react"
 import logonav from "../pod blanc.svg"
+import disconnect from "../disconnect.svg"
 
 
 const Profil = () => {
+
+	const logOut = async () => {
+		localStorage.removeItem("access_token");
+		document.location.href = "http://localhost:8080";
+	}
 
 	return (
 	<div className="flex flex-col w-screen h-screen bg-black">
@@ -29,6 +35,12 @@ const Profil = () => {
 						</svg>
 						<Link to="/Home/Chat"> Chat</Link>
 					</h1>
+				</div>
+				<div className="flex-row flex transition ease-in-out hover:scale-110 hover:cursor-pointer ">
+					<div className="flex my-auto ">
+						<span> &nbsp; &nbsp;</span>
+						<button onClick={logOut}><img src={disconnect} className=" w-6 "/></button>
+					</div>
 				</div>
 			</div>
       	</div>

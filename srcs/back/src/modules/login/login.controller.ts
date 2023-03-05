@@ -25,6 +25,7 @@ export class LoginController {
 	async getToken(@Param("code") code: string): Promise<any>
 	{
 		let token = await this.login_service.convertCode(code);
+		console.log(token.access_token);
 		let ft_user = await this.login_service.getUser(token.access_token);
 
 		let ds = databaseService.getDataSource();
@@ -52,12 +53,11 @@ export class LoginController {
 		}
 	}
 
-	@UseGuards(AuthGuard('jwt'))
 	@Get('test')
 	async test()
 	{
 		let ds = databaseService.getDataSource();
-		let exist = await ds.manager.findBy(User, {login: "lmataris"});
+		let exist = await ds.manager.findBy(User, {login: "kcatrix"});
 		if (exist[0])
 			console.log("toto");
 		else
@@ -66,12 +66,11 @@ export class LoginController {
 		return exist;
 	}
 
-	@UseGuards(AuthGuard('jwt'))
 	@Get('delete')
 	async del()
 	{
 		let ds = databaseService.getDataSource();
-		let exist = await ds.manager.findBy(User, {login: "lmataris"});
+		let exist = await ds.manager.findBy(User, {login: "kcatrix"});
 		await ds.manager.remove(User, exist);
 	}
 }

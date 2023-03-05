@@ -89,6 +89,10 @@ const Game = () => {
 	useEffect(() => {
 		let token = id;
 
+		let checkUsername = localStorage.getItem("username")
+		if ( checkUsername !== null)
+			setpseudo(checkUsername);
+
 		socket.on("game.join", (data: any) => {
 			if (data.sender.username === pseudo){
 			 	navigate(`/home/${data.token}`);
@@ -161,26 +165,25 @@ const Game = () => {
 	//-------------------------------------------------------------------------------------
 
 	return (
-		<div className={styles.game_screen}>
+		<div className="flex border border-white  rounded-lg m-auto w-4/6 h-4/6 justify-center">
 			{
 				!searching && !match &&
-				<div className={styles.game_menu}>
-					<img className={styles.game_img} src={logo} alt="" />
-					<input id="pseudo" type="text" value={pseudo} onChange={(e)=> {setpseudo(e.target.value);}}/>
-					<button className="flex mx-auto my-3 btn-primary" onClick={socket.join}> Partie Rapide </button>
+				<div className=" flex flex-col m-auto space-y-20 ">
+					<img className="my-20 mx-auto scale-150" src={logo} alt="" />
+					<button className="mx-auto btn-primary" onClick={socket.join}> Partie Rapide </button>
 				</div>
 			}
 			{
 				searching && !match && 
-					<div className={styles.game_loading}>
-						<img src={logo} className={styles.game_img} alt="" />
-						<h1 className={styles.game_msg}>SEARCHING...</h1>
+					<div className=" flex flex-col m-auto space-y-20 ">
+						<img className="my-20 mx-auto " src={logo} alt="" />
+						<h1 className="text-xl text-white font-semibold"> SEARCHING...</h1>
 					</div>
 			}
 			{
 				!searching && match && 
-				<div className={styles.game}>
-					<canvas className={styles.game_canvas} ref={canvasRef.canvasRef} onMouseMove={handleMove} width={PONG_W} height={PONG_H}/>
+				<div className="w-1/2">
+					<canvas className="w-full h-full" ref={canvasRef.canvasRef} onMouseMove={handleMove} width={PONG_W} height={PONG_H}/>
 				</div>
 			}
 		</div>
