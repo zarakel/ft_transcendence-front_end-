@@ -42,6 +42,6 @@ export class LoginService
   async getCredential(user: any)
   {
     const payload = {username: user.login};
-    return {jwt_token: await this.jwtService.signAsync(payload)};
+    return {jwt_token: this.jwtService.signAsync(payload)};
   }
 }

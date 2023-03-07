@@ -41,14 +41,22 @@ const Home = () => {
 		localStorage.setItem("checkPseudo", "oui");
 		checkPseudoIsNull = localStorage.getItem("checkPseudo");
 		if (checkPseudoIsNull !== null)
+		{
 			setPseudoIsCheck(true);
+			navigate("/home");
+		}
+		navigate("/home");
 	}
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		localStorage.setItem("checkPseudo", "oui");
 		checkPseudoIsNull = localStorage.getItem("checkPseudo");
 		if (checkPseudoIsNull !== null)
+		{
 			setPseudoIsCheck(true);
+			navigate("/home");
+		}
+		navigate("/home");
 	}
 
 	const [pseudo, setPseudo] = useState('');

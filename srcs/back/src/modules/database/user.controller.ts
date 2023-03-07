@@ -10,6 +10,7 @@ export class UserController{
     {
         let ds = databaseService.getDataSource();
         let user = await ds.manager.findBy(User, {login: body.login});
+        console.log(user[0].username);
         user[0].username = body.username;
         console.log(user[0].username);
         try {
