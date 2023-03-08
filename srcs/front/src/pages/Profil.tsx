@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import {useState} from "react"
 import logonav from "../pod blanc.svg"
 import disconnect from "../disconnect.svg"
+import modifyPicture from "./ModifyProfilePicture"
 
 
 const Profil = () => {
@@ -11,9 +12,31 @@ const Profil = () => {
 		document.location.href = "http://localhost:8080";
 	}
 
+
+	const Image = () => {
+
+		let pic: string;
+		const check: string | null = localStorage.getItem('profile_pic');
+		try {
+			if (check !== null)
+			{
+				if (check.includes("data:image/") || check.includes("blob:http://localhost:8080/"))
+					pic = check;
+				else 
+				pic = "data:image/png;base64," + check;
+					
+				return (pic);
+			}
+		}
+		catch (error) 
+		{
+			console.error("the content of profile_pic isn't right: ", error);
+		}
+	}	
+
 	return (
-	<div className="flex flex-col w-screen h-screen bg-black">
-    	<div className="flex flex-row w-screen my-10 h-20 justify-around transition ease-in-out hover:bg-sky-700">
+	<div className="absolute flex flex-col overflow-auto w-full h-full bg-black">
+    	<div className="flex flex-row w-full my-10 h-20 justify-around transition ease-in-out hover:bg-sky-700">
         	<div className="flex my-auto justify-center w-1/3">
         		<div className="transition ease-in-out hover:scale-110 hover:cursor-pointer">
             		<h1 className="text-2xl text-white my-auto ">
@@ -53,7 +76,7 @@ const Profil = () => {
 			</div>
 		</div>
 
-		<div className="w-screen flex flex-col my-12 space-y-16">
+		<div className="w-full flex flex-col my-12 space-y-16">
 			<div className="flex justify-around text-center text-white hover:rounded ">
 				<Link className="flex font-bold text-2xl transition ease-in-out p-4 hover:scale-110 hover:text-sky-500 hover:cursor-pointer " to="/Home/Profil/Auth2f">
 						Authentification 2 facteurs
@@ -61,15 +84,18 @@ const Profil = () => {
 				<Link className="flex font-bold text-2xl transition ease-in-out p-4 hover:scale-110 hover:text-sky-500 hover:cursor-pointer" to="/Home/Profil/MatchHistory">
 						Accéder au Match History
 				</Link>
-				<Link className="flex font-bold text-2xl transition ease-in-out p-4 hover:scale-110 hover:text-sky-500 hover:cursor-pointer" to="/Home/Profil/ChangerImage">
+				<Link className="flex font-bold text-2xl transition ease-in-out p-4 hover:scale-110 hover:text-sky-500 hover:cursor-pointer" to="/Home/Profil/modify_picture">
 					Changer son image de profil
 				</Link>
 			</div>
 			<div className="flex flex-col-3 text-center justify-around text-white hover:rounded ">
 				<div className="flex flex-col test-xl space-y-10 group-hover:block hover:rounded hover:border hover:border-white transition ease-in-out p-4 hover:bg-sky-700">
-					<h1 className="text-3xl font-bold -mx-5">
-						Stats
-					</h1>
+					<div className=" flex flex-row m-auto space-x-8 justify-center">
+						<img src={Image()} className="flex float-left w-20 h-20 rounded-full object-cover" alt=""/>
+						<h1 className="flex text-3xl font-bold italic">
+							{localStorage.getItem('username')}
+						</h1>
+					</div>
 					<h1>
 						// Insérer ici variables qui représenteront victoire | défaite //
 					</h1> 

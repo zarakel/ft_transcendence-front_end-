@@ -7,6 +7,7 @@ import Chat from './pages/Chat';
 import Profil from './pages/Profil';
 import Game from './pages/Game';
 import MatchHistory from './pages/MatchHistory';
+import ModifyPicture from './pages/ModifyProfilePicture';
 
 
 const App: FC = () => {
@@ -22,6 +23,7 @@ const App: FC = () => {
 		<Route element={<Profil />} path="/home/profil" />
 		<Route element={<Game />} path="/game" />
 		<Route element={<MatchHistory />} path="/home/profil/matchHistory" />
+		<Route element={<ModifyPicture />} path="/home/profil/modify_picture" />
       </Routes>
     </BrowserRouter>
   );

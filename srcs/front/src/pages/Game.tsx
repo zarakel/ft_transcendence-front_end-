@@ -1,11 +1,10 @@
-//import useSocket from "../hooks/useSocket";
-import { io, Socket } from "socket.io-client";
 import { useEffect, useState} from 'react';
-import { useNavigate } from "react-router-dom";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 import logo from "../balle blanche.svg";
 import styles from "../styles/game.module.scss";
 import useCanvas from "../hooks/useCanvas";
+import useSocket from "../hooks/useSocket";
+import useUser from "../hooks/useUser";
 
 export const PONG_W: number = 600;
 export const PONG_H: number = 400;
@@ -14,107 +13,69 @@ export const PLAYER_H: number = PONG_H * 0.3;
 
 
 const Game = () => {
-	//const socket = useSocket("http://localhost:3000");
-	const useSocket = (url: string) => {
-		const [socket, setSocket] = useState<Socket>();
-		const [ready, setReady] = useState<boolean>(false);
-		useEffect(() =>{
-			let socket = io(url, { forceNew: true });
-			socket.on("connect", () => {
-				setSocket(socket);
-				setReady(true);
-			});
-
-			return () => {
-				socket.disconnect();
-				setReady(false);
-			}
-		
-		}, [url]);
-		
-		const join = () =>{
-			if (socket) {
-				socket.emit("connect_msg", {sender :
-					{id: socket.id ,username: pseudo}});
-				socket.emit("message", {sender :
-									{id: socket.id ,username: pseudo
-									}, Roomtoken: "0", RoomType: "lobby", type: "join"})
-			setSearching(true);
-			}
-		};
-
-		const emit = (type: string, data: any) => {
-			if (socket)
-				socket.emit(type, data);
-		}
-	
-		const on = (name: string, callback: any) => {
-			if (socket)
-				return socket.on(name, callback)
-		}
-
-		return {current: socket, join, emit, on, ready}
-	}
-	
+	const socket = useSocket("http://localhost:3000/");
+	const user = useUser();
 	const [searching, setSearching] = useState(false);
 	const [match, setMatch] = useState(false);
-	const [pseudo, setpseudo] = useState('');
+	const [token, setToken] = useState("");
 	const [start, setStart] = useState(false);
 	const [position, setPosition] = useState('spec');
 	const [size, setSize] = useState<any>({w: PONG_W, h: PONG_H});
-	const [player1, setPlayer1] = useState<any>({});
-	const [player2, setPlayer2] = useState<any>({});
-	const [ball, setBall] = useState<any>({});
+	const [player1, setPlayer1] = useState<any>({y: PONG_H / 2 - (PONG_H * 0.3) / 2});
+	const [player2, setPlayer2] = useState<any>({y: PONG_H / 2 - (PONG_H * 0.3) / 2});
+	const [ball, setBall] = useState<any>({x: PONG_W / 2, y: PONG_H / 2, r: 5});
 
 	const {id} = useParams();
-	const socket = useSocket("http://localhost:3000");
 	const navigate = useNavigate();
 
 	socket.on("lobby.match", (data: any) => {
-		if (data.sender.username == pseudo){
-			console.log(`game created ${data.token} ${data.sender.pos}`);
-			if (socket.current)
-				socket.emit("message", {sender :
-					{id: socket.current.id ,username: pseudo, pos: data.sender.pos
-				}, Roomtoken: data.token, RoomType: "game", type: "join"});
-			setSearching(false);
-			setMatch(true);
-			setPosition(data.sender.pos);
-			setPlayer1({y: size.h / 2 - (size.h * 0.3) / 2})
-			setPlayer2({y: size.h / 2 - (size.h * 0.3) / 2})
-			setBall({x: PONG_W / 2, y: PONG_H / 2, r: 5});
-		}
+		console.log(`game created ${data.token} ${data.sender.pos}`);
+		navigate(`/home/${data.token}`);
+		setToken(data.token);
 	});
 
 	useEffect(() => {
 		let token = id;
 
-		let checkUsername = localStorage.getItem("username")
+		/*let checkUsername = localStorage.getItem("username")
 		if ( checkUsername !== null)
-			setpseudo(checkUsername);
+			setpseudo(checkUsername);*/
 
 		socket.on("game.join", (data: any) => {
-			if (data.sender.username === pseudo){
-			 	navigate(`/home/${data.token}`);
-			}
+			setPosition(data.sender.pos);
+			setSearching(false);
+			setMatch(true);
+		});
+
+		socket.on("game.start", (data: any) => {
+			setStart(true);
 		});
 	
 		socket.on("game.move", (data: any) => {
-			if (data.sender.pos === position) return ;
+			console.log("pos", position, data.sender.pos);
+			if (data.sender.pos === "spec") return ;
 			if (data.sender.pos === "left"){setPlayer1({y: data.sender.y});}
 			if (data.sender.pos === "right"){setPlayer2({y: data.sender.y});}
 		});
 
 		return () => {
-			if (socket.current){
-				console.log("passe in return");
+			/*if (socket.ready){
 				socket.emit("message", {sender :
-					{id: socket.current.id ,username: pseudo, pos: position
+					{id: user.id ,username: user.username, pos: position
 				}, Roomtoken: token, RoomType: "game", type: "leave"});
 				navigate('/home');
-			}
+				setSearching(false);
+				setMatch(false);
+			}*/
 		}
-	}, [match]);
+	}, [id]);
+
+	const join = () =>{
+		socket.emit("message", {sender :
+							{id: user.id ,username: user.username
+							}, Roomtoken: "0", RoomType: "lobby", type: "join"})
+		setSearching(true);
+	}
 
 	//----------------------------canva------------------------------------------
 
@@ -135,7 +96,6 @@ const Game = () => {
 	};
 
 	const drawPlayerAndBall = (context: CanvasRenderingContext2D) => {
-		//console.log("passe");
 		drawPlayers(context);
 		drawBall(context);
 	};
@@ -145,21 +105,20 @@ const Game = () => {
 		if (canvas)
 			setSize({w: canvas.clientWidth, h: canvas.clientHeight});
 	};
-	const update = () => {};
 	
-	const canvasRef = useCanvas(size, update, drawPlayerAndBall, resize);
+	const canvasRef = useCanvas(size, drawPlayerAndBall, resize);
 
 	const handleMove = (e: any) => {
 		let canvas = e.target;
 		let canvaRect = canvas.getBoundingClientRect()
 		let y = 0;
-		if (canvaRect && socket.current){
+		if (canvaRect && socket.ready){
 			y = e.clientY - canvaRect.y;
 			if (position === "left") setPlayer1({y: y});
 			if (position === "right") setPlayer2({y: y});
 			socket.emit("message", {type: "movePaddle", RoomType: "game", Roomtoken: id, sender :
-				{id: socket.current.id ,username: pseudo, pos: position, y: y}})
-		}
+				{id: user.id ,username: user.username, pos: position, y: y}})
+		} 
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -168,9 +127,9 @@ const Game = () => {
 		<div className="flex border border-white  rounded-lg m-auto w-4/6 h-4/6 justify-center">
 			{
 				!searching && !match &&
-				<div className=" flex flex-col m-auto space-y-20 ">
-					<img className="my-20 mx-auto scale-150" src={logo} alt="" />
-					<button className="mx-auto btn-primary" onClick={socket.join}> Partie Rapide </button>
+				<div className={styles.game_menu}>
+					<img className={styles.game_img} src={logo} alt="" />
+					<button className="flex mx-auto my-3 btn-primary" onClick={join}> Partie Rapide </button>
 				</div>
 			}
 			{

@@ -27,41 +27,39 @@ const Home = () => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		let request = await fetch(`http://${document.location.hostname}:3000/user/username_update`,
+		let request = await fetch("http://" + document.location.hostname + ":3000/user/username_update",
 			{
 				method: "POST",
 				headers:
 				{
 					"Content-Type":  "application/json",
-					'cors': 'true'
+					'cors': 'true',
+					'Authorization': `Bearer ${localStorage.getItem("jwt_token")}`
 				},
-					body: JSON.stringify({username: pseudo, login: localStorage.getItem("login")})
+				body: JSON.stringify({username: pseudo, login: localStorage.getItem("login")})
 			}
 		);
-		localStorage.setItem("checkPseudo", "oui");
-		checkPseudoIsNull = localStorage.getItem("checkPseudo");
-		if (checkPseudoIsNull !== null)
+		let res = await request.json();
+		if (res.boolean)
 		{
+			localStorage.removeItem("new");
+			localStorage.setItem("username", pseudo);
 			setPseudoIsCheck(true);
-			navigate("/home");
 		}
-		navigate("/home");
+		else
+			console.log("error username update");
 	}
 
+
+
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-		localStorage.setItem("checkPseudo", "oui");
-		checkPseudoIsNull = localStorage.getItem("checkPseudo");
-		if (checkPseudoIsNull !== null)
-		{
-			setPseudoIsCheck(true);
-			navigate("/home");
-		}
-		navigate("/home");
+		localStorage.removeItem("new");
+		setPseudoIsCheck(true);
 	}
 
 	const [pseudo, setPseudo] = useState('');
-	const [checkPseudo, setPseudoIsCheck] = useState(false);
-	
+	const [checkPseudo, setPseudoIsCheck] = useState(localStorage.getItem("new") === null ? true : false);
+		
 	return (						/* Nav Bar */
 	
 		<div>

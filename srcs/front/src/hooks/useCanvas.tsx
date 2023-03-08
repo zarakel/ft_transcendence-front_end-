@@ -1,10 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
 export type fctResize = () => void
-export type fctUpdate = () => void
 export type fctDrawPlayerAndBall = (context: CanvasRenderingContext2D) => void
 
-const useCanvas = (size: any, update: fctUpdate, drawPlayerAndBall: fctDrawPlayerAndBall, resize: fctResize) => {
+const useCanvas = (size: any, drawPlayerAndBall: fctDrawPlayerAndBall, resize: fctResize) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	useEffect(() => {
@@ -14,7 +13,6 @@ const useCanvas = (size: any, update: fctUpdate, drawPlayerAndBall: fctDrawPlaye
 		(function render() {
 			if (context)
 			{
-				update();
 				context.fillStyle = 'black';
     			context.fillRect(0, 0, size.w, size.h);
     			// Draw middle line
@@ -29,7 +27,7 @@ const useCanvas = (size: any, update: fctUpdate, drawPlayerAndBall: fctDrawPlaye
 		})();
 
 		return () =>  window.cancelAnimationFrame(anim)
-	}, [drawPlayerAndBall, update])
+	}, [drawPlayerAndBall])
 
 	//useEffect(() => resize(), []);
 
