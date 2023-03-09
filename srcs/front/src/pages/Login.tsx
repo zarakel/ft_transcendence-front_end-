@@ -56,10 +56,13 @@ const Login = () => {
 		setTimeout(() => {
 			if (localStorage.getItem("new") && localStorage.getItem("access_token")){
 				localStorage.removeItem("new");
-				document.location.href = "http://" + hostname + ":8080/home/profil";
-			}
-			else if (localStorage.getItem("access_token"))
 				document.location.href = "http://" + hostname + ":8080/home";
+				localStorage.setItem("connected", "yes")
+			}
+			else if (localStorage.getItem("access_token")){
+				document.location.href = "http://" + hostname + ":8080/home";
+				localStorage.setItem("connected", "yes")
+			}
 		}, 500);
 	}, [token]);
 
