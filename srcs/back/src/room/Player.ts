@@ -20,4 +20,10 @@ export default class Player
 	public emit(event: string, data:any){
 		this.socket.emit(event, data);
 	}
+
+	public toJson(){
+		return {id: this.id,
+			username: this.username, 
+			pos: this.pos}
+	}
 }
